@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exibição de tabelas</title>
+  </head>
+  <body>
+    <h1>Entradas</h1>
+    {{ table1|safe }}
+    <h3 style="left: 100px">{{total_positive|safe}}</h3>
+    
+    <h1>Saídas</h1>
+    {{ table2|safe }}
+    <h3 style="left: 100px">{{total_negative|safe}}</h3>
+  </body>
+</html>
