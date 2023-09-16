@@ -19,14 +19,14 @@
 	</div>
 	<button type="submit" class="btn btn-primary btn-upload">Enviar</button>
   </form>
+
+   <!-- Adicione o botão para gerar o gráfico -->
+<form action="{{ url_for('generate_graph') }}" method="POST" enctype="multipart/form-data">
+	
+	<button type="submit" class="btn btn-success btn-generate-graph">Gerar Gráfico</button>
+</form>
+
 </div>
-
-
-
-	
-
-	
-	
 
 
 </body>
