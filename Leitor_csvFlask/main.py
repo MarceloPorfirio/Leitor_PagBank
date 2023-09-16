@@ -52,27 +52,46 @@ def upload():
     # Exibe o DataFrame carregado na saída
     return render_template('tabelas.html',table1=html_str1,table2=html_str2,total_positive=total_positive,total_negative=total_negative )
 
+
+
+    # if action == 'generate_graph':
+        # # Verifica se um arquivo CSV foi enviado
+        # if 'file' not in request.files:
+        #     return 'Nenhum arquivo selecionado.'
+
+        # file = request.files['file']
+
+        # # Verifica se o arquivo não está vazio
+        # if file.filename == '':
+        #     return 'Arquivo vazio.'
+
 @app.route('/generate_graph', methods=['POST'])
 def generate_graph():
-   
-    # Verifica se um arquivo CSV foi enviado
-    if 'file' not in request.files:
-        return 'Nenhum arquivo selecionado.'
-    
-    # Lê o arquivo CSV usando o pandas
-    file = request.files['file']
-    df = pd.read_csv(file, sep=';')
-    df['VALOR'] = df['VALOR'].str.replace(',', '.')
-    df['VALOR'] = df['VALOR'].astype(float)
+        try:
+            file = request.files['file']
+            
+            if not file:
+                return 'Nenhum arquivo selecionado ou o arquivo está vazio.'
+            
+            df = pd.read_csv(file, sep=';', encoding='utf-8', header=0)
 
-    # Código para gerar o gráfico
-    fig = px.bar(df, x='DESCRICAO', y='VALOR', color='TIPO', title='Gráfico de Valores por Descrição')
+            if df.empty:
+                return 'O arquivo não contém dados.'
 
-    # Renderiza o gráfico em uma página separada
-    graph_html = fig.to_html(full_html=False)
+            df['VALOR'] = df['VALOR'].str.replace(',', '.').astype(float)
 
-    return render_template('graficos.html', graph_html=graph_html)
-    
+            df_grouped = df.groupby(['TIPO']).sum().reset_index()
+
+            fig = px.bar(df_grouped, x='TIPO', y='VALOR', title='Gráfico de Valores por Tipo')
+
+            graph_html = fig.to_html(full_html=False)
+
+            return render_template('graficos.html', graph_html=graph_html)
+        except pd.errors.EmptyDataError:
+            return 'O arquivo não contém dados ou o formato é inválido.'
+
+
+
 
 if __name__ == '__main__':
     app.run()
